@@ -19,20 +19,96 @@
 \begin{document}
 \maketitle
 
-\paragraph{Setup.} \emph{Document:} the 2024 FIA Formula One Sporting Regulations (Issue~6, 106 pages). It is a
-regulatory text where most rules are followed by ``unless'', ``except'' or ``may not'' clauses, and the same
-words (\emph{pit lane, penalty, tyres, safety car}) recur across many unrelated articles. \emph{Chunking:} one
-chunk per sub-article (e.g.\ 55.8); long sub-articles are split at $\le$900 characters with a 150-character
-overlap, giving 526 chunks. Both pipelines use this same chunk set. \emph{Bi-encoder:} \texttt{all-MiniLM-L6-v2}
-with a FAISS inner-product index on normalised vectors (cosine similarity). \emph{Cross-encoder:}
-\texttt{cross-encoder/}\allowbreak\texttt{ms-marco-MiniLM-L-6-v2}. \emph{LLM:} Gemini \texttt{gemini-3.6-flash}, temperature~0, with an
-identical prompt for both pipelines. The prompt tells the model to answer only from the three passages, cite
-articles, and say ``The provided context does not answer this'' otherwise. \emph{Pipeline~1} sends the bi-encoder
-Top-3 of the Top-10; \emph{Pipeline~2} re-scores the same Top-10 with the cross-encoder and sends its Top-3.
-\emph{Evaluation:} 52 questions, each labelled with the exact sentence in the PDF that answers it, and tagged as
-keyword trap, exception, negation, buried chunk, or a direct-lookup control. All timings are on an Apple M4 (MPS).
+\section{Setup \& Environment}
 
-\section{Architecture Comparison}
+\paragraph{Dataset.} The 2024 FIA Formula One Sporting Regulations (Issue~6, 106 pages), a regulatory / rulebook-style
+PDF. Most rules are followed by ``unless'', ``except'' or ``may not'' clauses, and the same words (\emph{pit lane,
+penalty, tyres, safety car}) recur across many unrelated articles, which makes it a hard case for dense retrieval.
+
+\paragraph{LLM \& embeddings.} Bi-encoder: \texttt{sentence-transformers/all-MiniLM-L6-v2} (384-d). Cross-encoder:
+\texttt{cross-encoder/}\allowbreak\texttt{ms-marco-MiniLM-L-6-v2}. Both run locally (PyTorch, Apple M4 / MPS). LLM:
+Gemini API, \texttt{gemini-3.6-flash}, temperature~0.
+
+\section{Two-Stage Retrieval Implementation}
+
+\paragraph{Chunk corpus.} Text is extracted with PyMuPDF and split into one chunk per sub-article (e.g.\ 55.8). Long
+sub-articles are split at $\le$900 characters with a 150-character overlap, giving 526 chunks. Both pipelines use
+exactly this chunk set.
+
+\paragraph{Pipeline 1 (Baseline Retrieval).} (a) All chunks are embedded with the bi-encoder and indexed in a FAISS
+inner-product index on L2-normalised vectors, so the score equals cosine similarity. (b) For each query the Top-10
+chunks are retrieved. (c) The Top-3 of these are passed to the LLM to generate \emph{Answer~1}.
+
+\paragraph{Pipeline 2 (Advanced Re-Ranking).} (a) The same Top-10 candidates are taken. (b) All 10 (query, chunk)
+pairs are scored by the cross-encoder. (c) The candidates are re-sorted by cross-encoder score and the Top-3 are
+kept. (d) These are passed to the LLM with the \emph{identical prompt} to generate \emph{Answer~2}. The prompt tells
+the model to answer only from the three passages, cite article numbers, and otherwise reply ``The provided context
+does not answer this''.
+
+\section{Failure Mode Analysis (Stress Testing)}
+
+I built a test suite of 52 questions. Each is labelled with the exact sentence in the PDF that answers it (the gold
+chunk must contain that sentence) and tagged as keyword trap (10), exception / corner case (13), negation /
+constraint (15), buried chunk (3), or a direct-lookup control (11). Below are the failure queries where the
+baseline stumbles and re-ranking restores relevance, grouped by the categories in the assignment.
+
+\subsection{Keyword Trap / Distractor}
+\textbf{Q26: ``Can children enter the pit lane?''} ``Children'' never appears in the document; the rule says ``no one under the age of
+16''. The bi-encoder fills its Top-3 with chunks that merely share the words \emph{pit lane} (a car reversing in
+the pit lane, the pit exit being closed). The cross-encoder connects the synonym and promotes the rule from \#5 to
+\#2.
+
+\subsection{Exceptions \& Corner Cases}
+\textbf{Q10: ``Must every driver use two different tyre compounds in the race?''} and \textbf{Q50: ``What happens
+if a driver cannot serve a penalty because he retired?''} The two-compound tyre rule sits inside the 5-page tyre article.
+That article yields about ten near-identical chunks with cosine scores between 0.57 and 0.68, so the bi-encoder
+orders them almost at random and the rule lands at \#8. The cross-encoder separates them sharply: the gold chunk
+scores 7.1 against at most 3.6 for the rest, so it moves to \#1. Q50 is a true ``except when'' clause (a penalty
+that cannot be served because the driver retired) hidden in the middle of the long 54.3 penalty list. It moves from
+\#6 to \#1 with a cross-encoder score of $+5.5$, while every other candidate scores below $-0.2$.
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}clcrcrl@{}}
+\toprule
+ & Chunk & Bi rank & Cosine & CE rank & CE score & Content \\
+\midrule
+ & 30.3 & 1 & 0.683 & 2  & 3.62  & Presenting tyres to the Technical Delegate \\
+ & 30.5 & 2 & 0.680 & 5  & 2.19  & ``All tyres must be operated in accordance with \ldots'' \\
+ & 30.5 & 3 & 0.653 & 4  & 2.26  & Same-specification sets; 54.3d penalty \\
+ & 30.3 & 4 & 0.642 & 6  & 0.32  & Marking of the tyre sidewall \\
+ & 30.5 & 5 & 0.607 & 7  & 0.16  & Additional tyres made available by the FIA \\
+ & 30.6 & 6 & 0.582 & 10 & $-5.37$ & Testing of tyres \\
+ & 30.2 & 7 & 0.581 & 9  & $-2.29$ & Tyre allocation per Competition \\
+$\star$ & \textbf{30.5m} & \textbf{8} & \textbf{0.580} & \textbf{1} & \textbf{7.08} & \textbf{``must use at least two different specifications''} \\
+ & 30.5 & 9 & 0.575 & 8  & $-1.29$ & Wet-weather tyres when a race is resumed \\
+ & 30.2 & 10 & 0.571 & 3 & 2.59  & Allocation when extra sets are released \\
+\bottomrule
+\end{tabular}
+\caption{Full Top-10 for Q10 (``Must every driver use two different tyre compounds in the race?''). Cosine scores
+are almost flat (0.57--0.68), so the bi-encoder cannot tell the tyre chunks apart. The cross-encoder gives the gold
+chunk ($\star$) a clear margin (7.08 vs.\ 3.62) and moves it \#8 $\to$ \#1.}
+\label{tab:q10}
+\end{table}
+
+\subsection{Negation \& Constraints}
+\textbf{Q31: ``When are no championship points awarded for a shortened race?''} and \textbf{Q21: ``Can mechanics
+work on the car while a driver serves a five second penalty?''} For ``when are \emph{no} points awarded'', the bi-encoder's top hits
+are the \emph{positive} points table (6.4) and the dead-heat rule (7.1). These are on-topic but have the wrong
+polarity, and Answer~1 says the context does not answer. For Q21 (``may not be worked on'') the baseline Top-3 held
+the neighbouring stop-and-go clause. Answer~1 reaches the right yes/no answer but cites the wrong clause, and adds
+an engine-restart allowance that does not apply to a 5\,s penalty. Re-ranking moves the gold chunk from \#4 to \#2 in both queries.
+
+\subsection{Other Document-Specific Failures}
+\textbf{Q12: ``What is the penalty for not using two different dry tyre specifications?''}, a vital chunk buried at
+ranks 4--10. This is the most harmful baseline case. The gold chunk sat at \#9, and the
+baseline Top-3 contained a \emph{different} tyre penalty (54.3d, for not changing tyres as instructed). Answer~1
+presented that penalty as the answer: a confident, cited, but wrong rule rather than a refusal. After re-ranking
+(\#9 $\to$ \#1), Answer~2 gives the correct sanction: disqualification, or +30\,s if the race cannot be restarted.
+
+\section{Analysis and Report}
+
+\subsection{Architecture Comparison}
 
 A \textbf{bi-encoder} encodes the query and each chunk \emph{independently} into one fixed vector
 ($\mathbf{q}=f(q)$, $\mathbf{d}=f(d)$) and scores them by cosine similarity $\cos(\mathbf{q},\mathbf{d})$. Since
@@ -49,7 +125,7 @@ actually answers the question (right condition, right polarity, right actor) ins
 cost is that the score depends on the query, so nothing can be precomputed: every (query, chunk) pair needs a full
 forward pass at query time.
 
-\section{Qualitative \& Rank Shift Analysis}
+\subsection{Qualitative \& Rank Shift Analysis}
 
 \begin{table}[H]
 \centering\small
@@ -68,7 +144,7 @@ Control (direct lookup)    & 11 & 1.00 & 1.00          & \textbf{0.95} & 0.94 \\
 \textbf{All}               & 52 & 0.769 & \textbf{0.846} & 0.656 & \textbf{0.774} \\
 \bottomrule
 \end{tabular}
-\caption{Rank of the gold chunk before and after re-ranking, per failure category. Hit@1 rises from 0.519 to 0.692.
+\caption{Retrieval quality per failure category: how often the gold chunk reaches the LLM's Top-3 (Hit@3) and how high it is ranked (MRR@10). Hit@1 rises from 0.519 to 0.692.
 The gold chunk is inside the baseline Top-10 for 47/52 queries.}
 \label{tab:metrics}
 \end{table}
@@ -101,54 +177,7 @@ cross-encoder scores are in the notebook (Section~7).}
 \label{tab:shifts}
 \end{table}
 
-\begin{table}[H]
-\centering\small
-\begin{tabular}{@{}clcrcrl@{}}
-\toprule
- & Chunk & Bi rank & Cosine & CE rank & CE score & Content \\
-\midrule
- & 30.3 & 1 & 0.683 & 2  & 3.62  & Presenting tyres to the Technical Delegate \\
- & 30.5 & 2 & 0.680 & 5  & 2.19  & ``All tyres must be operated in accordance with \ldots'' \\
- & 30.5 & 3 & 0.653 & 4  & 2.26  & Same-specification sets; 54.3d penalty \\
- & 30.3 & 4 & 0.642 & 6  & 0.32  & Marking of the tyre sidewall \\
- & 30.5 & 5 & 0.607 & 7  & 0.16  & Additional tyres made available by the FIA \\
- & 30.6 & 6 & 0.582 & 10 & $-5.37$ & Testing of tyres \\
- & 30.2 & 7 & 0.581 & 9  & $-2.29$ & Tyre allocation per Competition \\
-$\star$ & \textbf{30.5m} & \textbf{8} & \textbf{0.580} & \textbf{1} & \textbf{7.08} & \textbf{``must use at least two different specifications''} \\
- & 30.5 & 9 & 0.575 & 8  & $-1.29$ & Wet-weather tyres when a race is resumed \\
- & 30.2 & 10 & 0.571 & 3 & 2.59  & Allocation when extra sets are released \\
-\bottomrule
-\end{tabular}
-\caption{Full Top-10 for Q10 (``Must every driver use two different tyre compounds in the race?''). Cosine scores
-are almost flat (0.57--0.68), so the bi-encoder cannot tell the tyre chunks apart. The cross-encoder gives the gold
-chunk ($\star$) a clear margin (7.08 vs.\ 3.62) and moves it \#8 $\to$ \#1.}
-\label{tab:q10}
-\end{table}
-
-\paragraph{Exceptions \& corner cases (Q10, Q50).} The two-compound tyre rule sits inside the 5-page tyre article.
-That article yields about ten near-identical chunks with cosine scores between 0.57 and 0.70, so the bi-encoder
-orders them almost at random and the rule lands at \#8. The cross-encoder separates them sharply: the gold chunk
-scores 7.1 against at most 3.6 for the rest, so it moves to \#1. Q50 is a true ``except when'' clause (a penalty
-that cannot be served because the driver retired) hidden in the middle of the long 54.3 penalty list. It moves from
-\#6 to \#1 with a cross-encoder score of $+5.5$, while every other candidate scores below $-0.2$.
-
-\paragraph{Other: buried chunk (Q12).} This is the most harmful baseline case. The gold chunk sat at \#9, and the
-baseline Top-3 contained a \emph{different} tyre penalty (54.3d, for not changing tyres as instructed). Answer~1
-presented that penalty as the answer: a confident, cited, but wrong rule rather than a refusal. After re-ranking
-(\#9 $\to$ \#1), Answer~2 gives the correct sanction: disqualification, or +30\,s if the race cannot be restarted.
-
-\paragraph{Negation \& constraints (Q21, Q31).} For ``when are \emph{no} points awarded'', the bi-encoder's top hits
-are the \emph{positive} points table (6.4) and the dead-heat rule (7.1). These are on-topic but have the wrong
-polarity, and Answer~1 says the context does not answer. For Q21 (``may not be worked on'') the baseline Top-3 held
-the neighbouring stop-and-go clause. Answer~1 reaches the right yes/no answer but cites the wrong clause, and adds
-an engine-restart allowance that does not apply to a 5\,s penalty.
-
-\paragraph{Keyword trap (Q26).} ``Children'' never appears in the document; the rule says ``no one under the age of
-16''. The bi-encoder fills its Top-3 with chunks that merely share the words \emph{pit lane} (a car reversing in
-the pit lane, the pit exit being closed). The cross-encoder connects the synonym and promotes the rule from \#5 to
-\#2.
-
-\begin{table}[H]
+\begin{table}[tbp]
 \centering\small
 \begin{tabularx}{\textwidth}{@{}p{1.2cm}LL@{}}
 \toprule
@@ -176,6 +205,15 @@ answers are in the notebook.}
 \label{tab:answers}
 \end{table}
 
+\paragraph{Did the baseline hallucinate, omit a clause, or misstate a rule?} In all six rescued queries the
+critical chunk was outside the baseline Top-3, and Answer~1 failed in one of three ways. \emph{Omission} (Q10, Q26,
+Q31, Q50): the model said the context does not answer the question. \emph{Misstated rule} (Q12): it presented an
+unrelated penalty as the answer. \emph{Wrong clause} (Q21): the right yes/no answer, justified with a neighbouring
+clause plus a condition that does not apply. No answer invented facts absent from its passages, because the prompt
+restricts the model to the context. The failures were therefore missing or misattributed rules, not free
+hallucination. With the critical chunk in its Top-3, Answer~2 was correct in all six; Q10 still lacks the
+exception, for the chunking reason below.
+
 \paragraph{Where re-ranking did not help.} (i) In Q03 the question mixes two topics (fuel \emph{and} tyres). The
 cross-encoder followed \emph{tyres} and pushed the refuelling chunk out of the Top-3, turning a correct Answer~1
 into a refusal. All of its scores for this query were strongly negative ($-5.6$ to $-10.7$), so it was not
@@ -184,7 +222,7 @@ the Top-10 cannot recover it. (iii) In Q10 the chunk boundary splits clause 30.5
 used intermediate or wet-weather tyres'' are in the previous chunk. Answer~2 therefore states the rule without its
 exception: re-ranking fixes ordering, not chunking.
 
-\section{Latency Profiling}
+\subsection{Latency Profiling}
 
 Retrieval stages were timed over all 52 queries $\times$ 20 repeats (1{,}040 runs, after warm-up). LLM time is the
 wall-clock time of the 14 Gemini calls in the failure-query analysis.
@@ -215,7 +253,7 @@ Re-ranking makes retrieval about $9\times$ slower (5\,ms $\to$ 50\,ms), but in a
 That is about 0.7\% of end-to-end latency, because the LLM call (5--12\,s) dominates everything. Ten
 cross-encoder passes (about 4.5\,ms per pair) are a small price for the gains in Table~\ref{tab:metrics}.
 
-\section{Scaling Question}
+\subsection{Scaling Question}
 
 \begin{table}[H]
 \centering\small
@@ -248,5 +286,21 @@ Scoring everything would also add little accuracy, because the cheap first stage
 chunk was in the Top-10 for 47 of 52 queries). The sensible design is therefore a funnel. The fast, high-recall
 bi-encoder narrows the collection to a few candidates, and the slow, high-precision cross-encoder is spent only on
 ordering those candidates. That is exactly where it changed the answers in Table~\ref{tab:shifts}.
+
+\section{Conclusion}
+
+On a regulation-heavy document, the bi-encoder reliably finds the right \emph{topic} but often misses the right
+\emph{clause}, usually the one that carries an exception, a negation, or a synonym of the query's wording. Re-ranking
+its own Top-10 with a cross-encoder fixed many of these cases: Hit@3 rose from 0.769 to 0.846, MRR@10 from 0.656 to
+0.774, and the gains came from negation, exception and buried-clause questions, not from simple lookups. In every
+query where re-ranking pulled the critical chunk into the Top-3, the answer changed from an omission or a misstated
+rule to a correct, cited answer. The extra cost was about 45\,ms per query, under 1\% of the end-to-end time.
+
+Re-ranking is not a complete fix. It can only reorder what the first stage retrieved (5 of 52 gold chunks were never
+in the Top-10). It cannot repair a chunk boundary that separates a rule from its exception (Q10). On a mixed-topic
+question it demoted the right chunk and made the answer worse (Q03). The cross-encoder is also far too slow to score
+a whole collection (about 1.8\,h per query at one million chunks). The two models therefore work best together: the
+bi-encoder for fast, high-recall candidate retrieval, and the cross-encoder for precise ordering of those few
+candidates before they reach the LLM.
 
 \end{document}
