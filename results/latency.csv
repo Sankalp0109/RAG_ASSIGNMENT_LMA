@@ -1,0 +1,9 @@
+stage,mean_ms,p50_ms,p95_ms
+Query embedding (bi-encoder),5.34,5.31,5.67
+FAISS Top-10 search,0.02,0.02,0.03
+Cross-encoder re-rank (10 pairs),44.82,45.29,50.23
+Pipeline 1 retrieval total,5.37,5.34,5.7
+Pipeline 2 retrieval total,50.18,50.66,55.65
+"LLM generation (Gemini, per call)",6526.09,5274.84,12230.76
+Pipeline 1 end-to-end (retrieval + LLM),6531.45,5280.21,12236.12
+Pipeline 2 end-to-end (retrieval + LLM),6576.27,5325.03,12280.94

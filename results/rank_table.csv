@@ -1,0 +1,53 @@
+id,category,query,gold,baseline_rank,reranked_rank,shift,base_top3,rerank_top3
+Q01,Keyword trap / distractor,Can a car be refuelled during a pit stop in the race?,36.2,1,1,#1 → #1,True,True
+Q02,Negation / constraint,Is refuelling allowed during the race?,36.2,1,1,#1 → #1,True,True
+Q03,Keyword trap / distractor,Can the team top up fuel when the car comes in for new tyres?,36.2,3,5,#3 → #5,True,False
+Q04,Control (direct lookup),What is the maximum speed allowed in the pit lane?,34.7,1,1,#1 → #1,True,True
+Q05,Control (direct lookup),How many points does a driver get for setting the fastest lap?,6.4,2,1,#2 → #1,True,True
+Q06,Exception / corner case,Is the driver of the fastest lap guaranteed a point?,6.4,2,1,#2 → #1,True,True
+Q07,Exception / corner case,Does a driver who sets the fastest lap but finishes 12th get a bonus point?,6.4,1,1,#1 → #1,True,True
+Q08,Control (direct lookup),What happens if a driver collects too many penalty points?,4.2,1,1,#1 → #1,True,True
+Q09,Keyword trap / distractor,When does a driver receive a race ban?,4.2 / 54.3i,1,1,#1 → #1,True,True
+Q10,Exception / corner case,Must every driver use two different tyre compounds in the race?,30.5m,8,1,#8 → #1,False,True
+Q11,Exception / corner case,Is a driver who uses intermediate tyres in the race still required to use two dry compounds?,30.5m,2,1,#2 → #1,True,True
+Q12,Buried chunk (rank 4-10),What is the penalty for not using two different dry tyre specifications?,30.5m,9,1,#9 → #1,False,True
+Q13,Negation / constraint,Can drivers overtake while the safety car is deployed?,55.8,5,5,#5 → #5,False,False
+Q14,Negation / constraint,Can a driver overtake under the virtual safety car?,56.6,2,2,#2 → #2,True,True
+Q15,Negation / constraint,Can a driver enter the pits during a VSC?,56.4,2,2,#2 → #2,True,True
+Q16,Negation / constraint,Can a driver pit while the safety car is out?,55.11,2,1,#2 → #1,True,True
+Q17,Exception / corner case,How long is the race at Monaco?,5.4a,1,2,#1 → #2,True,True
+Q18,Control (direct lookup),What is the minimum race distance in kilometres?,5.4,1,1,#1 → #1,True,True
+Q19,Exception / corner case,Can a driver serve a drive-through penalty while the safety car is deployed?,54.4b,,,not in Top-10,False,False
+Q20,Exception / corner case,Can a driver serve a five second time penalty during a safety car pit stop?,54.3a-b,3,3,#3 → #3,True,True
+Q21,Negation / constraint,Can mechanics work on the car while a driver serves a five second penalty?,54.4c,4,2,#4 → #2,False,True
+Q22,Negation / constraint,What are team personnel prohibited from doing during the curfew?,23.5,1,1,#1 → #1,True,True
+Q23,Keyword trap / distractor,Can engineers work on their computers at the track during the overnight restricted period?,23.5d,1,1,#1 → #1,True,True
+Q24,Keyword trap / distractor,How many times can a team break the overnight curfew in a season?,23.6,,,not in Top-10,False,False
+Q25,Negation / constraint,Who is not allowed in the pit lane?,26.13,,,not in Top-10,False,False
+Q26,Keyword trap / distractor,Can children enter the pit lane?,26.13,5,2,#5 → #2,False,True
+Q27,Keyword trap / distractor,Are dogs allowed in the paddock?,26.16,2,1,#2 → #1,True,True
+Q28,Negation / constraint,Are tyre blankets permitted in the pit lane?,26.17,1,1,#1 → #1,True,True
+Q29,Negation / constraint,Is a car allowed to reverse in the pit lane?,34.3,1,1,#1 → #1,True,True
+Q30,Negation / constraint,What changes are teams not allowed to make to the car under parc ferme?,40.9,2,1,#2 → #1,True,True
+Q31,Negation / constraint,When are no championship points awarded for a shortened race?,6.5a-b,4,2,#4 → #2,False,True
+Q32,Exception / corner case,How many points are given if the race is stopped early after only a few laps?,6.5,1,1,#1 → #1,True,True
+Q33,Exception / corner case,What happens if two drivers set an identical lap time in qualifying?,39.4a)iv,1,1,#1 → #1,True,True
+Q34,Keyword trap / distractor,Who wins the championship if two drivers finish level on points?,7.2,1,1,#1 → #1,True,True
+Q35,Control (direct lookup),How many engines can a driver use in a season?,28.2,1,1,#1 → #1,True,True
+Q36,Exception / corner case,Can a mechanic use an external starter to restart the engine on the grid during the race?,26.8,1,1,#1 → #1,True,True
+Q37,Negation / constraint,Can a driver leave the track to gain an advantage?,33.3,1,1,#1 → #1,True,True
+Q38,Control (direct lookup),What is the maximum number of team personnel allowed to work on the cars?,23.1,1,3,#1 → #3,True,True
+Q39,Control (direct lookup),Can the race director close the pit entry?,34.15,1,1,#1 → #1,True,True
+Q40,Keyword trap / distractor,What happens if a driver jumps the start?,48.1,,,not in Top-10,False,False
+Q41,Negation / constraint,Can a driver appeal a time penalty given during the race?,54.3,1,1,#1 → #1,True,True
+Q42,Negation / constraint,Which decisions cannot be appealed?,17.3 / 54.3,1,1,#1 → #1,True,True
+Q43,Control (direct lookup),How fast can fuel be pumped into the car?,36.3,1,1,#1 → #1,True,True
+Q44,Control (direct lookup),Must the engine be switched off while fuel is being added?,36.4,1,1,#1 → #1,True,True
+Q45,Exception / corner case,What happens to the two-compound tyre rule if the race is suspended and cannot be restarted?,30.5m,1,1,#1 → #1,True,True
+Q46,Keyword trap / distractor,Can a reserve driver take part in free practice?,32.4,,,not in Top-10,False,False
+Q47,Buried chunk (rank 4-10),How many times per season must a team run a rookie driver in practice?,32.4c,3,5,#3 → #5,True,False
+Q48,Control (direct lookup),What is the penalty for an unsafe release in the race?,34.14d,1,1,#1 → #1,True,True
+Q49,Exception / corner case,What happens if a penalty is given in the last three laps of the race?,54.3,3,1,#3 → #1,True,True
+Q50,Buried chunk (rank 4-10),What happens if a driver cannot serve a penalty because he retired?,54.3,6,1,#6 → #1,False,True
+Q51,Exception / corner case,When are trainee mechanics allowed in addition to the operational personnel limit?,23.3,2,1,#2 → #1,True,True
+Q52,Control (direct lookup),Do laps behind the VSC count towards race distance?,56.8,1,1,#1 → #1,True,True

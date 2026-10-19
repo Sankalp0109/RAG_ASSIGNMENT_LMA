@@ -1,0 +1,55 @@
+% acl_onecol.sty -- single-column variant of the ACL paper style
+% (Times 11pt, A4, ACL title block / section / caption conventions, no bibliography).
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{acl_onecol}[2026/10/19 single-column ACL-like style]
+
+\RequirePackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{times}
+\renewcommand{\ttdefault}{lmtt}  % Latin Modern typewriter (Courier is not in TeX Live basic)
+\RequirePackage{latexsym}
+\RequirePackage{xcolor}
+\RequirePackage[colorlinks=true,linkcolor=darkblue,citecolor=darkblue,urlcolor=darkblue]{hyperref}
+\RequirePackage{microtype}
+\RequirePackage{booktabs}
+\RequirePackage{caption}
+\definecolor{darkblue}{rgb}{0,0.08,0.45}
+
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0pt}
+\renewcommand{\baselinestretch}{1.0}
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+
+% ACL section headings: bold, 12pt / 11pt
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-2.0ex plus -0.5ex minus -.2ex}{1.0ex plus .2ex}{\large\bfseries\raggedright}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {-1.6ex plus -0.5ex minus -.2ex}{0.6ex plus .2ex}{\normalsize\bfseries\raggedright}}
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+  {1.0ex plus 0.5ex minus .2ex}{-1em}{\normalsize\bfseries}}
+
+% ACL title block
+\renewcommand\maketitle{\par
+  \begingroup
+    \def\thefootnote{\fnsymbol{footnote}}
+    \vspace*{-0.5cm}
+    \begin{center}
+      {\Large\bfseries \@title \par}
+      \vskip 1.2em
+      {\normalsize \begin{tabular}[t]{c}\@author\end{tabular}\par}
+      \vskip 0.6em
+      {\normalsize \@date\par}
+    \end{center}
+    \vskip 0.8em
+  \endgroup
+  \setcounter{footnote}{0}}
+
+\renewenvironment{abstract}%
+  {\begin{center}\textbf{Abstract}\end{center}\vspace{-0.4em}%
+   \begin{quote}\small}%
+  {\end{quote}\vspace{0.3em}}
+
+\endinput

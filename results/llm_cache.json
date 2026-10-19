@@ -1,0 +1,77 @@
+{
+ "e0a35c1c6dddc0b2b9a97b28981c166b67409dfb73c6a392d7a5caadda11e685": {
+  "text": "According to Article 34.7, the pit lane speed limit is 80 km/h during the whole Competition. However, this limit may be amended by the Race Director following a recommendation from the Safety Delegate.",
+  "latency_ms": 3244.175957999687,
+  "question": "What is the pit lane speed limit?"
+ },
+ "c77be3d232c3991c02369ab80554bbbda3aba08024693c4fb9b242c7d3c8b92b": {
+  "text": "The provided context does not answer this.",
+  "latency_ms": 4516.271209000479,
+  "question": "Must every driver use two different tyre compounds in the race?"
+ },
+ "934b032a010609e892b9ffb68d91f2fe0a7647c8d34757b4930186226e6721b8": {
+  "text": "According to Article 30.5, each driver must use at least two different specifications of dry-weather tyres during the race, at least one of which must be a mandatory dry-weather race tyre specification. Failure to comply with this requirement will result in the disqualification of the relevant driver from the race results. If the race is suspended and cannot be re-started, thirty seconds will instead be added to the elapsed time of any driver who was unable to use at least two specifications of dry-weather tyres (Article 30.5).",
+  "latency_ms": 5903.605958999833,
+  "question": "Must every driver use two different tyre compounds in the race?"
+ },
+ "2f2241c033ca7e46fb7ef6ab0b1e6d936cbe4452e866c390d187257c4e720dd8": {
+  "text": "According to Article 30.5, a penalty under Article 54.3d) will be imposed on any driver who does not change tyres as specified.",
+  "latency_ms": 4989.209875000597,
+  "question": "What is the penalty for not using two different dry tyre specifications?"
+ },
+ "36174c376dd5f0bfd49572e5b9e3b0d2b48f9356ac569bdfbc894e53143f37e2": {
+  "text": "Failure to use at least two different specifications of dry-weather tyres during a race will result in the disqualification of the driver from the race results (Article 30.5). However, if the race is suspended and cannot be re-started, a penalty of thirty (30) seconds will instead be added to the elapsed time of any driver unable to comply with this requirement (Article 30.5).",
+  "latency_ms": 5193.959833000918,
+  "question": "What is the penalty for not using two different dry tyre specifications?"
+ },
+ "19c1f5320d529ebec9c882404778f604498d68b5c38e52d6cab18601018b966d": {
+  "text": "No, while a car is stationary in the pit lane as a result of incurring a time penalty, it may not be worked on (Article 54.4d). However, if the engine stops, any work necessary to restart it may be carried out after the time penalty period has elapsed (Article 54.4d). Failing to comply with this requirement may result in the car being disqualified (Article 54.4e).",
+  "latency_ms": 6033.387583000149,
+  "question": "Can mechanics work on the car while a driver serves a five second penalty?"
+ },
+ "a39db68509f06276e500f5507fc3fe11cb2d1472e33ccb8ab7119efae5543c4e": {
+  "text": "No, mechanics cannot work on the car while the driver is serving a five-second time penalty. According to Article 54.4c), a car that is stationary in the pit lane to serve a penalty incurred under Article 54.3a) may not be worked on until it has been stationary for the duration of the penalty. Furthermore, Article 54.4c) specifies that touching the car or driver by hand, tools, or equipment constitutes working.",
+  "latency_ms": 4298.1664999988425,
+  "question": "Can mechanics work on the car while a driver serves a five second penalty?"
+ },
+ "89c738c7f9c352b06ba976347f2dac956fdabd0e41d1f57a65ce4ac1c42b9225": {
+  "text": "The provided context does not answer this.",
+  "latency_ms": 8802.921292000974,
+  "question": "Can children enter the pit lane?"
+ },
+ "b893b7f6e437dcbf26bcf32eff7176bbb8cad6486f516d92ffa11e26a33367d2": {
+  "text": "According to Article 26.13, no one under the age of 16 is permitted in the pit lane during specific time periods surrounding practice, qualifying, sprint sessions, reconnaissance laps, and races, unless authorised by the FIA. Outside of these restricted times, or with specific FIA authorization, individuals under 16 may enter the pit lane.",
+  "latency_ms": 4988.59850000008,
+  "question": "Can children enter the pit lane?"
+ },
+ "abc42138b837bc3fb2dd7981b7ccbdf81b523985d41527c3b48806d5839dba0a": {
+  "text": "The provided context does not answer this.",
+  "latency_ms": 11215.368249999301,
+  "question": "When are no championship points awarded for a shortened race?"
+ },
+ "e8eb318e47e8183e68711f3ca28d50adfdabdcc0f4613779d4d8256b6dc3aaad": {
+  "text": "For a shortened race, no points are awarded if the leader has completed less than two laps (Article 6.5a). Additionally, no points are awarded unless a minimum of two laps have been completed by the leader without a Safety Car and/or VSC intervention (Article 6.5b). Furthermore, no fastest lap point will be awarded if the leader has completed less than 50% of the scheduled race distance (Article 6.4).",
+  "latency_ms": 5355.72937500001,
+  "question": "When are no championship points awarded for a shortened race?"
+ },
+ "44462f7f87a2c67b3f8b6e08cb8474d0281373259eeeec232f9e51554b03a0e8": {
+  "text": "The provided context does not answer this.",
+  "latency_ms": 8948.84041700061,
+  "question": "What happens if a driver cannot serve a penalty because he retired?"
+ },
+ "c9659a4f4929f0a9729353b10e4752d9125614bdf0bfa4e864332b7dbcfac7aa": {
+  "text": "If a driver is unable to serve an imposed penalty due to retirement from a sprint session or race, the stewards may impose a grid place penalty on the driver at his next race (Article 54.3). Additionally, if a driver retires from a sprint session or race as a result of the car being released in an unsafe condition, a fine may be imposed upon the Competitor (Article 34.14d).",
+  "latency_ms": 3619.1799160005758,
+  "question": "What happens if a driver cannot serve a penalty because he retired?"
+ },
+ "22e1628d4677d07dc10092e2d78002946d89e504cbd09543273d69c4d68a5f63": {
+  "text": "According to Article 36.1, refuelling is only permitted in the Competitors\u2019 designated garages. Furthermore, under Article 36.2, fuel may not be added to a car after it has left the pit lane to start reconnaissance lap(s) until the end-of-session signal has been shown. While the provided context does not specifically mention tyre changes, fuel cannot be added to a car outside the designated garage or after it leaves the pit lane until the end of the session (Articles 36.1 and 36.2).",
+  "latency_ms": 14116.47366699981,
+  "question": "Can the team top up fuel when the car comes in for new tyres?"
+ },
+ "fce9681d71c4f4acdd3ea42297031940643683d0f306546607f118923461ec70": {
+  "text": "The provided context does not answer this.",
+  "latency_ms": 3383.5149579990684,
+  "question": "Can the team top up fuel when the car comes in for new tyres?"
+ }
+}

@@ -1,0 +1,601 @@
+[
+ {
+  "id": "Q01",
+  "category": "Keyword trap / distractor",
+  "query": "Can a car be refuelled during a pit stop in the race?",
+  "gold": [
+   "36.2"
+  ],
+  "gold_text": [
+   "Fuel may not be added to nor removed from a car after it has left the pit lane"
+  ]
+ },
+ {
+  "id": "Q02",
+  "category": "Negation / constraint",
+  "query": "Is refuelling allowed during the race?",
+  "gold": [
+   "36.2"
+  ],
+  "gold_text": [
+   "Fuel may not be added to nor removed from a car after it has left the pit lane"
+  ]
+ },
+ {
+  "id": "Q03",
+  "category": "Keyword trap / distractor",
+  "query": "Can the team top up fuel when the car comes in for new tyres?",
+  "gold": [
+   "36.2"
+  ],
+  "gold_text": [
+   "Fuel may not be added to nor removed from a car after it has left the pit lane"
+  ],
+  "truth": "No. Fuel may not be added to or removed from a car after it has left the pit lane for the reconnaissance lap(s) until the end-of-session signal; refuelling is only allowed in the team's designated garage.",
+  "deep_dive": true,
+  "regression": true,
+  "observation": "The baseline had the refuelling chunk (36.1/36.2) at #3, and **Answer 1 is correct** (fuel may only be added in the garage and not between the reconnaissance lap and the end of the race). The query is phrased around *tyres*, so the cross-encoder fills the Top-3 with tyre and test-day chunks. Every cross-encoder score here is strongly negative (−5.6 to −10.7), meaning it finds no candidate convincing, and it pushes the refuelling chunk to #5. **Answer 2** says the context does not answer the question. MS MARCO re-rankers are trained on short web queries and can over-weight the dominant topic word in a mixed-topic question."
+ },
+ {
+  "id": "Q04",
+  "category": "Control (direct lookup)",
+  "query": "What is the maximum speed allowed in the pit lane?",
+  "gold": [
+   "34.7"
+  ],
+  "gold_text": [
+   "A speed limit of 80km/h"
+  ]
+ },
+ {
+  "id": "Q05",
+  "category": "Control (direct lookup)",
+  "query": "How many points does a driver get for setting the fastest lap?",
+  "gold": [
+   "6.4"
+  ],
+  "gold_text": [
+   "one (1) point will be awarded to the driver who achieved the fastest"
+  ]
+ },
+ {
+  "id": "Q06",
+  "category": "Exception / corner case",
+  "query": "Is the driver of the fastest lap guaranteed a point?",
+  "gold": [
+   "6.4"
+  ],
+  "gold_text": [
+   "one (1) point will be awarded to the driver who achieved the fastest"
+  ]
+ },
+ {
+  "id": "Q07",
+  "category": "Exception / corner case",
+  "query": "Does a driver who sets the fastest lap but finishes 12th get a bonus point?",
+  "gold": [
+   "6.4"
+  ],
+  "gold_text": [
+   "one (1) point will be awarded to the driver who achieved the fastest"
+  ]
+ },
+ {
+  "id": "Q08",
+  "category": "Control (direct lookup)",
+  "query": "What happens if a driver collects too many penalty points?",
+  "gold": [
+   "4.2"
+  ],
+  "gold_text": [
+   "If a driver accrues twelve (12) penalty points"
+  ]
+ },
+ {
+  "id": "Q09",
+  "category": "Keyword trap / distractor",
+  "query": "When does a driver receive a race ban?",
+  "gold": [
+   "4.2 / 54.3i"
+  ],
+  "gold_text": [
+   "If a driver accrues twelve (12) penalty points",
+   "Suspension from the driver"
+  ]
+ },
+ {
+  "id": "Q10",
+  "category": "Exception / corner case",
+  "query": "Must every driver use two different tyre compounds in the race?",
+  "gold": [
+   "30.5m"
+  ],
+  "gold_text": [
+   "use at least two different specifications of dry-weather tyres"
+  ],
+  "truth": "Yes, unless the driver used intermediate or wet-weather tyres during the race: each driver must use at least two different dry-weather specifications, at least one of them a mandatory race specification. Failure = disqualification (or +30 s if the race is suspended and cannot be restarted).",
+  "deep_dive": true,
+  "observation": "The chunk holding the rule sat at bi-encoder rank #8, behind seven other tyre chunks that share the words *tyre / specification / race* (30.3 tyre control, 30.5 allocation). The cross-encoder reads the query and the passage together, sees that only this one states *each driver must use at least two different specifications*, and moves it to #1. **Answer 1** says the context does not answer the question; **Answer 2** states the rule and the disqualification penalty. Answer 2 still **omits the \"unless he has used intermediate or wet-weather tyres\" exception**: the chunk boundary falls inside clause 30.5 m), so the opening words of the exception are in the previous chunk. Re-ranking cannot fix a chunking error."
+ },
+ {
+  "id": "Q11",
+  "category": "Exception / corner case",
+  "query": "Is a driver who uses intermediate tyres in the race still required to use two dry compounds?",
+  "gold": [
+   "30.5m"
+  ],
+  "gold_text": [
+   "use at least two different specifications of dry-weather tyres"
+  ]
+ },
+ {
+  "id": "Q12",
+  "category": "Buried chunk (rank 4-10)",
+  "query": "What is the penalty for not using two different dry tyre specifications?",
+  "gold": [
+   "30.5m"
+  ],
+  "gold_text": [
+   "failure to comply with this requirement will result in the disqualification"
+  ],
+  "truth": "Disqualification from the race results; if the race is suspended and cannot be re-started, 30 seconds are added to the driver's elapsed time instead.",
+  "deep_dive": true,
+  "observation": "The gold chunk is buried at #9 and the baseline Top-3 contains a *different* tyre penalty (54.3d for not changing tyres as specified). **Answer 1 misstates the rule**: it gives that unrelated 54.3d penalty as the penalty for the two-compound rule. After re-ranking (#9 → #1), **Answer 2** gives the correct sanction: disqualification, or +30 s if the race is suspended and cannot be re-started."
+ },
+ {
+  "id": "Q13",
+  "category": "Negation / constraint",
+  "query": "Can drivers overtake while the safety car is deployed?",
+  "gold": [
+   "55.8"
+  ],
+  "gold_text": [
+   "no driver may overtake another car on the track, including the safety car"
+  ]
+ },
+ {
+  "id": "Q14",
+  "category": "Negation / constraint",
+  "query": "Can a driver overtake under the virtual safety car?",
+  "gold": [
+   "56.6"
+  ],
+  "gold_text": [
+   "no driver may overtake another car on the track whilst the VSC"
+  ]
+ },
+ {
+  "id": "Q15",
+  "category": "Negation / constraint",
+  "query": "Can a driver enter the pits during a VSC?",
+  "gold": [
+   "56.4"
+  ],
+  "gold_text": [
+   "no car may enter the pits whilst the VSC procedure is in use"
+  ]
+ },
+ {
+  "id": "Q16",
+  "category": "Negation / constraint",
+  "query": "Can a driver pit while the safety car is out?",
+  "gold": [
+   "55.11"
+  ],
+  "gold_text": [
+   "no car may enter the pits whilst the safety car is deployed"
+  ]
+ },
+ {
+  "id": "Q17",
+  "category": "Exception / corner case",
+  "query": "How long is the race at Monaco?",
+  "gold": [
+   "5.4a"
+  ],
+  "gold_text": [
+   "The distance of the race in Monaco"
+  ]
+ },
+ {
+  "id": "Q18",
+  "category": "Control (direct lookup)",
+  "query": "What is the minimum race distance in kilometres?",
+  "gold": [
+   "5.4"
+  ],
+  "gold_text": [
+   "exceed a distance of 305km"
+  ]
+ },
+ {
+  "id": "Q19",
+  "category": "Exception / corner case",
+  "query": "Can a driver serve a drive-through penalty while the safety car is deployed?",
+  "gold": [
+   "54.4b"
+  ],
+  "gold_text": [
+   "he may not carry out the penalty if the VSC procedure is in use"
+  ]
+ },
+ {
+  "id": "Q20",
+  "category": "Exception / corner case",
+  "query": "Can a driver serve a five second time penalty during a safety car pit stop?",
+  "gold": [
+   "54.3a-b"
+  ],
+  "gold_text": [
+   "this includes any stop the driver makes whilst a VSC or safety car"
+  ]
+ },
+ {
+  "id": "Q21",
+  "category": "Negation / constraint",
+  "query": "Can mechanics work on the car while a driver serves a five second penalty?",
+  "gold": [
+   "54.4c"
+  ],
+  "gold_text": [
+   "it may not be worked on until the car has been stationary for the duration"
+  ],
+  "truth": "No. While stationary for a 5 s or 10 s time penalty the car may not be worked on until it has been stationary for the full penalty; touching the car or driver by hand, tools or equipment counts as work. A breach may lead to disqualification.",
+  "deep_dive": true,
+  "observation": "A negation query: the answer is the clause *may not be worked on until … stationary for the duration of the penalty* (54.4c), found at baseline rank #4. The baseline Top-3 holds 54.4d (the stop-and-go clause) plus two irrelevant restart-procedure chunks. **Answer 1** reaches the right yes/no answer but cites the wrong clause and adds the engine-restart allowance, which applies to the stop-and-go penalty, not to a 5 s penalty. **Answer 2** cites 54.4c and the definition of \"working\"."
+ },
+ {
+  "id": "Q22",
+  "category": "Negation / constraint",
+  "query": "What are team personnel prohibited from doing during the curfew?",
+  "gold": [
+   "23.5"
+  ],
+  "gold_text": [
+   "are not permitted within the confines of the circuit during the restricted periods",
+   "must not conduct operational activities"
+  ]
+ },
+ {
+  "id": "Q23",
+  "category": "Keyword trap / distractor",
+  "query": "Can engineers work on their computers at the track during the overnight restricted period?",
+  "gold": [
+   "23.5d"
+  ],
+  "gold_text": [
+   "must not conduct operational activities"
+  ]
+ },
+ {
+  "id": "Q24",
+  "category": "Keyword trap / distractor",
+  "query": "How many times can a team break the overnight curfew in a season?",
+  "gold": [
+   "23.6"
+  ],
+  "gold_text": [
+   "Four (4) exceptions in each Championship"
+  ]
+ },
+ {
+  "id": "Q25",
+  "category": "Negation / constraint",
+  "query": "Who is not allowed in the pit lane?",
+  "gold": [
+   "26.13"
+  ],
+  "gold_text": [
+   "no one under the age of 16"
+  ]
+ },
+ {
+  "id": "Q26",
+  "category": "Keyword trap / distractor",
+  "query": "Can children enter the pit lane?",
+  "gold": [
+   "26.13"
+  ],
+  "gold_text": [
+   "no one under the age of 16"
+  ],
+  "truth": "Not at certain times: unless authorised by the FIA, no one under 16 may be in the pit lane from 15 min before to 5 min after each practice / qualifying / sprint-qualifying session, and from 15 min before the pit exit opens for reconnaissance laps until the last car enters parc fermé after the sprint or race.",
+  "deep_dive": true,
+  "observation": "A keyword trap: the query says *children*, the regulation says *no one under the age of 16*. The bi-encoder ranks generic pit-lane chunks (\"car reversed in the pit lane\", \"pit exit will be closed\") above the answer because they share *pit lane*. The cross-encoder links *children* with *under the age of 16* (#5 → #2). **Answer 1** says the context does not answer the question; **Answer 2** gives the age limit, the restricted time windows and the FIA-authorisation exception."
+ },
+ {
+  "id": "Q27",
+  "category": "Keyword trap / distractor",
+  "query": "Are dogs allowed in the paddock?",
+  "gold": [
+   "26.16"
+  ],
+  "gold_text": [
+   "Animals, except those"
+  ]
+ },
+ {
+  "id": "Q28",
+  "category": "Negation / constraint",
+  "query": "Are tyre blankets permitted in the pit lane?",
+  "gold": [
+   "26.17"
+  ],
+  "gold_text": [
+   "tyre blankets are not permitted in the Pit Lane"
+  ]
+ },
+ {
+  "id": "Q29",
+  "category": "Negation / constraint",
+  "query": "Is a car allowed to reverse in the pit lane?",
+  "gold": [
+   "34.3"
+  ],
+  "gold_text": [
+   "At no time may a car be reversed in the pit lane"
+  ]
+ },
+ {
+  "id": "Q30",
+  "category": "Negation / constraint",
+  "query": "What changes are teams not allowed to make to the car under parc ferme?",
+  "gold": [
+   "40.9"
+  ],
+  "gold_text": [
+   "may not modify any part on the car"
+  ]
+ },
+ {
+  "id": "Q31",
+  "category": "Negation / constraint",
+  "query": "When are no championship points awarded for a shortened race?",
+  "gold": [
+   "6.5a-b"
+  ],
+  "gold_text": [
+   "No points will be awarded If the leader has completed less than two"
+  ],
+  "truth": "No points if the leader completed fewer than two laps; in the reduced-points cases, no points unless the leader completed at least two laps without Safety Car / VSC intervention.",
+  "deep_dive": true,
+  "observation": "The question asks when **no** points are awarded. The bi-encoder ranks the *positive* points table (6.4) and the dead-heat rule (7.1) first, and the second half of 6.5 at #3, but that half only has the 25 %/50 %/75 % thresholds. The chunk with *No points will be awarded if the leader has completed less than two laps* moves from #4 to #2. **Answer 1** says the context does not answer the question; **Answer 2** gives both no-points conditions (fewer than 2 laps; fewer than 2 laps without SC/VSC)."
+ },
+ {
+  "id": "Q32",
+  "category": "Exception / corner case",
+  "query": "How many points are given if the race is stopped early after only a few laps?",
+  "gold": [
+   "6.5"
+  ],
+  "gold_text": [
+   "No points will be awarded If the leader has completed less than two",
+   "If the leader has completed two (2) laps but less than 25%"
+  ]
+ },
+ {
+  "id": "Q33",
+  "category": "Exception / corner case",
+  "query": "What happens if two drivers set an identical lap time in qualifying?",
+  "gold": [
+   "39.4a)iv"
+  ],
+  "gold_text": [
+   "set identical times during Q1"
+  ]
+ },
+ {
+  "id": "Q34",
+  "category": "Keyword trap / distractor",
+  "query": "Who wins the championship if two drivers finish level on points?",
+  "gold": [
+   "7.2"
+  ],
+  "gold_text": [
+   "The holder of the greatest number of first places"
+  ]
+ },
+ {
+  "id": "Q35",
+  "category": "Control (direct lookup)",
+  "query": "How many engines can a driver use in a season?",
+  "gold": [
+   "28.2"
+  ],
+  "gold_text": [
+   "may use no more than four (4) engines"
+  ]
+ },
+ {
+  "id": "Q36",
+  "category": "Exception / corner case",
+  "query": "Can a mechanic use an external starter to restart the engine on the grid during the race?",
+  "gold": [
+   "26.8"
+  ],
+  "gold_text": [
+   "the engine may only be started with the starter except"
+  ]
+ },
+ {
+  "id": "Q37",
+  "category": "Negation / constraint",
+  "query": "Can a driver leave the track to gain an advantage?",
+  "gold": [
+   "33.3"
+  ],
+  "gold_text": [
+   "without gaining any lasting advantage"
+  ]
+ },
+ {
+  "id": "Q38",
+  "category": "Control (direct lookup)",
+  "query": "What is the maximum number of team personnel allowed to work on the cars?",
+  "gold": [
+   "23.1"
+  ],
+  "gold_text": [
+   "fifty-eight (58) team personnel"
+  ]
+ },
+ {
+  "id": "Q39",
+  "category": "Control (direct lookup)",
+  "query": "Can the race director close the pit entry?",
+  "gold": [
+   "34.15"
+  ],
+  "gold_text": [
+   "the Race Director may ask for the pit entry to be closed"
+  ]
+ },
+ {
+  "id": "Q40",
+  "category": "Keyword trap / distractor",
+  "query": "What happens if a driver jumps the start?",
+  "gold": [
+   "48.1"
+  ],
+  "gold_text": [
+   "Moved after the four (4) second light is illuminated"
+  ]
+ },
+ {
+  "id": "Q41",
+  "category": "Negation / constraint",
+  "query": "Can a driver appeal a time penalty given during the race?",
+  "gold": [
+   "54.3"
+  ],
+  "gold_text": [
+   "they shall not be subject to appeal",
+   "Appeals may not be made"
+  ]
+ },
+ {
+  "id": "Q42",
+  "category": "Negation / constraint",
+  "query": "Which decisions cannot be appealed?",
+  "gold": [
+   "17.3 / 54.3"
+  ],
+  "gold_text": [
+   "they shall not be subject to appeal",
+   "Appeals may not be made"
+  ]
+ },
+ {
+  "id": "Q43",
+  "category": "Control (direct lookup)",
+  "query": "How fast can fuel be pumped into the car?",
+  "gold": [
+   "36.3"
+  ],
+  "gold_text": [
+   "at a rate greater than 0.8 litres"
+  ]
+ },
+ {
+  "id": "Q44",
+  "category": "Control (direct lookup)",
+  "query": "Must the engine be switched off while fuel is being added?",
+  "gold": [
+   "36.4"
+  ],
+  "gold_text": [
+   "but the engine must be stopped"
+  ]
+ },
+ {
+  "id": "Q45",
+  "category": "Exception / corner case",
+  "query": "What happens to the two-compound tyre rule if the race is suspended and cannot be restarted?",
+  "gold": [
+   "30.5m"
+  ],
+  "gold_text": [
+   "thirty (30) seconds will be added to the elapsed time of any driver who was unable"
+  ]
+ },
+ {
+  "id": "Q46",
+  "category": "Keyword trap / distractor",
+  "query": "Can a reserve driver take part in free practice?",
+  "gold": [
+   "32.4"
+  ],
+  "gold_text": [
+   "permitted to use additional drivers during P1 and P2"
+  ]
+ },
+ {
+  "id": "Q47",
+  "category": "Buried chunk (rank 4-10)",
+  "query": "How many times per season must a team run a rookie driver in practice?",
+  "gold": [
+   "32.4c"
+  ],
+  "gold_text": [
+   "who has not participated in more than two (2)"
+  ]
+ },
+ {
+  "id": "Q48",
+  "category": "Control (direct lookup)",
+  "query": "What is the penalty for an unsafe release in the race?",
+  "gold": [
+   "34.14d"
+  ],
+  "gold_text": [
+   "released in an unsafe condition during a sprint session or a race"
+  ]
+ },
+ {
+  "id": "Q49",
+  "category": "Exception / corner case",
+  "query": "What happens if a penalty is given in the last three laps of the race?",
+  "gold": [
+   "54.3"
+  ],
+  "gold_text": [
+   "imposed during the last three (3) laps"
+  ]
+ },
+ {
+  "id": "Q50",
+  "category": "Buried chunk (rank 4-10)",
+  "query": "What happens if a driver cannot serve a penalty because he retired?",
+  "gold": [
+   "54.3"
+  ],
+  "gold_text": [
+   "unable to serve the penalty due to retirement"
+  ],
+  "truth": "If a 5 s / 10 s / drive-through / stop-and-go penalty cannot be served because the driver retired, the stewards may impose a grid place penalty at the driver's next race.",
+  "deep_dive": true,
+  "observation": "An exception clause buried at #6 in the middle of the long 54.3 penalty list. The bi-encoder prefers chunks with *penalty / grid positions* (34.14, 49.5). The cross-encoder scores the clause *unable to serve the penalty due to retirement* far higher (+5.54 vs at most −0.26 for every other candidate) and moves it to #1. **Answer 1** says the context does not answer the question; **Answer 2** gives the grid-place penalty at the next race."
+ },
+ {
+  "id": "Q51",
+  "category": "Exception / corner case",
+  "query": "When are trainee mechanics allowed in addition to the operational personnel limit?",
+  "gold": [
+   "23.3"
+  ],
+  "gold_text": [
+   "sixteen (16) individual exceptions during a Championship for trainee personnel"
+  ]
+ },
+ {
+  "id": "Q52",
+  "category": "Control (direct lookup)",
+  "query": "Do laps behind the VSC count towards race distance?",
+  "gold": [
+   "56.8"
+  ],
+  "gold_text": [
+   "counted as a lap"
+  ]
+ }
+]
