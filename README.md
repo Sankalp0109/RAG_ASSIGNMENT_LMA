@@ -1,7 +1,5 @@
 # RAG: Baseline Bi-Encoder Retrieval vs. Cross-Encoder Re-Ranking
 
-**GitHub repository:** https://github.com/Sankalp0109/RAG_ASSIGNMENT_LMA
-
 Two retrieval pipelines are compared over the same chunked corpus, the *2024 FIA Formula One Sporting Regulations*
 (Issue 6, 106 pages, `corpus_document.pdf`):
 
